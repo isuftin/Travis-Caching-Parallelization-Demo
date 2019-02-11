@@ -1,0 +1,50 @@
+---
+  sudo: required
+
+  language: bash
+
+  services: docker
+
+  before_install:
+    - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+    - mkdir -p $TRAVIS_HOME/cache
+    - for n in 10 20 30 40 50; do dd if=/dev/urandom of=$TRAVIS_HOME/cache/$n.bin bs=1M count=$n;done
+  install:
+    - cp $TRAVIS_HOME/cache/10.bin .
+    - size=10 docker-compose build
+    - cp $TRAVIS_HOME/cache/20.bin .
+    - size=20 docker-compose build
+    - cp $TRAVIS_HOME/cache/30.bin .
+    - size=30 docker-compose build
+    - cp $TRAVIS_HOME/cache/40.bin .
+    - size=40 docker-compose build
+    - cp $TRAVIS_HOME/cache/50.bin .
+    - size=50 docker-compose build
+  script:
+    - size=10 docker-compose up -d
+    - sleep 5
+    - wget -O 10.bin "http://localhost:8080/10.bin"
+    - test $(stat --printf="%s" "10.bin") -ge $((10 * 1024 * 1024))
+    - docker-compose down
+    - size=20 docker-compose up -d
+    - sleep 5
+    - wget -O 20.bin "http://localhost:8080/20.bin"
+    - test $(stat --printf="%s" "20.bin") -ge $((20 * 1024 * 1024))
+    - docker-compose down
+    - size=30 docker-compose up -d
+    - sleep 5
+    - wget -O 30.bin "http://localhost:8080/30.bin"
+    - test $(stat --printf="%s" "30.bin") -ge $((30 * 1024 * 1024))
+    - docker-compose down
+    - size=40 docker-compose up -d
+    - sleep 5
+    - wget -O 40.bin "http://localhost:8080/40.bin"
+    - test $(stat --printf="%s" "40.bin") -ge $((40 * 1024 * 1024))
+    - docker-compose down
+    - size=50 docker-compose up -d
+    - sleep 5
+    - wget -O 50.bin "http://localhost:8080/50.bin"
+    - test $(stat --printf="%s" "50.bin") -ge $((50 * 1024 * 1024))
+    - docker-compose down
