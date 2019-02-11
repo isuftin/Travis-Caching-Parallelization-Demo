@@ -5,6 +5,10 @@
 
   services: docker
 
+  env:
+    global:
+      - DOCKER_COMPOSE_VERSION=1.23.2
+
   cache:
     timeout: 1000
     directories:
@@ -18,8 +22,9 @@
     include:
       - stage: precache
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
           - chmod +x docker-compose
+          - sudo cp docker-compose $TRAVIS_HOME/cache/docker-compose
           - sudo mv docker-compose /usr/local/bin
           - mkdir -p $TRAVIS_HOME/cache
           - |
@@ -30,68 +35,67 @@
               docker save myapache:$n -o $TRAVIS_HOME/cache/$n.tar.gz;
             done
       - stage: test
+        name: 10
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-          - chmod +x docker-compose
-          - sudo mv docker-compose /usr/local/bin
+          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+          - sudo chmod +x /usr/local/bin/docker-compose
         install:
-          - docker load -i $TRAVIS_HOME/cache/10.tar.gz
+          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - size=10 docker-compose up -d
+          - size=$TRAVIS_JOB_NAME docker-compose up -d
           - sleep 5
-          - wget -O 10.bin "http://localhost:8080/10.bin"
-          - test $(stat --printf="%s" "10.bin") -ge $((10 * 1024 * 1024))
-          - docker-compose down
+          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
       - stage: test
+        name: 20
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-          - chmod +x docker-compose
-          - sudo mv docker-compose /usr/local/bin
+          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+          - sudo chmod +x /usr/local/bin/docker-compose
         install:
-          - docker load -i $TRAVIS_HOME/cache/20.tar.gz
+          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - size=20 docker-compose up -d
+          - size=$TRAVIS_JOB_NAME docker-compose up -d
           - sleep 5
-          - wget -O 20.bin "http://localhost:8080/20.bin"
-          - test $(stat --printf="%s" "20.bin") -ge $((20 * 1024 * 1024))
+          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
       - stage: test
+        name: 30
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-          - chmod +x docker-compose
-          - sudo mv docker-compose /usr/local/bin
+          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+          - sudo chmod +x /usr/local/bin/docker-compose
         install:
-          - docker load -i $TRAVIS_HOME/cache/30.tar.gz
+          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - size=30 docker-compose up -d
+          - size=$TRAVIS_JOB_NAME docker-compose up -d
           - sleep 5
-          - wget -O 30.bin "http://localhost:8080/30.bin"
-          - test $(stat --printf="%s" "30.bin") -ge $((30 * 1024 * 1024))
+          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
       - stage: test
+        name: 40
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-          - chmod +x docker-compose
-          - sudo mv docker-compose /usr/local/bin
+          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+          - sudo chmod +x /usr/local/bin/docker-compose
         install:
-          - docker load -i $TRAVIS_HOME/cache/40.tar.gz
+          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - size=40 docker-compose up -d
+          - size=$TRAVIS_JOB_NAME docker-compose up -d
           - sleep 5
-          - wget -O 40.bin "http://localhost:8080/40.bin"
-          - test $(stat --printf="%s" "40.bin") -ge $((40 * 1024 * 1024))
+          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
       - stage: test
+        name: 50
         before_install:
-          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-          - chmod +x docker-compose
-          - sudo mv docker-compose /usr/local/bin
+          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+          - sudo chmod +x /usr/local/bin/docker-compose
         install:
-          - docker load -i $TRAVIS_HOME/cache/50.tar.gz
+          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - size=50 docker-compose up -d
+          - size=$TRAVIS_JOB_NAME docker-compose up -d
           - sleep 5
-          - wget -O 50.bin "http://localhost:8080/50.bin"
-          - test $(stat --printf="%s" "50.bin") -ge $((50 * 1024 * 1024))
+          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
