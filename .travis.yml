@@ -5,6 +5,11 @@
 
   services: docker
 
+  cache:
+    timeout: 1000
+    directories:
+      - $TRAVIS_HOME/cache
+
   env:
     matrix:
       - size=10
@@ -23,6 +28,7 @@
     - cp $TRAVIS_HOME/cache/$size.bin .
     - docker-compose build
   script:
+    - ls -al $TRAVIS_HOME/cache/
     - docker-compose up -d
     - sleep 5
     - wget -O $size.bin "http://localhost:8080/$size.bin"
