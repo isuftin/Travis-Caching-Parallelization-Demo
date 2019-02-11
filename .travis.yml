@@ -10,14 +10,6 @@
     directories:
       - $TRAVIS_HOME/cache
 
-  env:
-    matrix:
-      - size=10
-      - size=20
-      - size=30
-      - size=40
-      - size=50
-
   stages:
     - precache
     - test
@@ -30,18 +22,59 @@
           - chmod +x docker-compose
           - sudo mv docker-compose /usr/local/bin
           - mkdir -p $TRAVIS_HOME/cache
-          - dd if=/dev/urandom of=$TRAVIS_HOME/cache/$size.bin bs=1M count=$size
-        install: true
-        script: true
+          - for n in 10 20 30 40 50; do dd if=/dev/urandom of=$TRAVIS_HOME/cache/$n.bin bs=1M count=$n;done
       - stage: test
-        before_install: true
         install:
-          - cp $TRAVIS_HOME/cache/$size.bin .
-          - docker-compose build
+          - cp $TRAVIS_HOME/cache/10.bin .
+          - size=10 docker-compose build
         script:
           - ls -al $TRAVIS_HOME/cache/
-          - docker-compose up -d
+          - size=10 docker-compose up -d
           - sleep 5
-          - wget -O $size.bin "http://localhost:8080/$size.bin"
-          - test $(stat --printf="%s" "$size.bin") -ge $(($size * 1024 * 1024))
+          - wget -O 10.bin "http://localhost:8080/10.bin"
+          - test $(stat --printf="%s" "10.bin") -ge $((10 * 1024 * 1024))
+          - docker-compose down
+      - stage: test
+        install:
+          - cp $TRAVIS_HOME/cache/20.bin .
+          - size=20 docker-compose build
+        script:
+          - ls -al $TRAVIS_HOME/cache/
+          - size=20 docker-compose up -d
+          - sleep 5
+          - wget -O 20.bin "http://localhost:8080/20.bin"
+          - test $(stat --printf="%s" "20.bin") -ge $((20 * 1024 * 1024))
+          - docker-compose down
+      - stage: test
+        install:
+          - cp $TRAVIS_HOME/cache/30.bin .
+          - size=30 docker-compose build
+        script:
+          - ls -al $TRAVIS_HOME/cache/
+          - size=30 docker-compose up -d
+          - sleep 5
+          - wget -O 30.bin "http://localhost:8080/30.bin"
+          - test $(stat --printf="%s" "30.bin") -ge $((30 * 1024 * 1024))
+          - docker-compose down
+      - stage: test
+        install:
+          - cp $TRAVIS_HOME/cache/40.bin .
+          - size=40 docker-compose build
+        script:
+          - ls -al $TRAVIS_HOME/cache/
+          - size=40 docker-compose up -d
+          - sleep 5
+          - wget -O 40.bin "http://localhost:8080/40.bin"
+          - test $(stat --printf="%s" "40.bin") -ge $((40 * 1024 * 1024))
+          - docker-compose down
+      - stage: test
+        install:
+          - cp $TRAVIS_HOME/cache/50.bin .
+          - size=50 docker-compose build
+        script:
+          - ls -al $TRAVIS_HOME/cache/
+          - size=50 docker-compose up -d
+          - sleep 5
+          - wget -O 50.bin "http://localhost:8080/50.bin"
+          - test $(stat --printf="%s" "50.bin") -ge $((50 * 1024 * 1024))
           - docker-compose down
