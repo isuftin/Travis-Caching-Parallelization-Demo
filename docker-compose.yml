@@ -1,0 +1,12 @@
+---
+  version: '3.6'
+
+  services:
+    apache:
+      image: myapache:$size
+      build:
+        context: .
+        args:
+          - size=$size
+      ports:
+        - "8080:80"
