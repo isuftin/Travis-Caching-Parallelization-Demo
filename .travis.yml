@@ -14,6 +14,20 @@
     directories:
       - $TRAVIS_HOME/cache
 
+  _test: &_test
+    stage: test
+    before_install:
+      - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
+      - sudo chmod +x /usr/local/bin/docker-compose
+    install:
+      - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
+    script:
+      - ls -al $TRAVIS_HOME/cache/
+      - size=$TRAVIS_JOB_NAME docker-compose up -d
+      - sleep 5
+      - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
+      - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
+
   stages:
     - precache
     - test
@@ -34,68 +48,13 @@
               size=$n docker-compose build;
               docker save myapache:$n -o $TRAVIS_HOME/cache/$n.tar.gz;
             done
-      - stage: test
+      - <<: *_test
         name: 10
-        before_install:
-          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
-          - sudo chmod +x /usr/local/bin/docker-compose
-        install:
-          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
-        script:
-          - ls -al $TRAVIS_HOME/cache/
-          - size=$TRAVIS_JOB_NAME docker-compose up -d
-          - sleep 5
-          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
-          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
-      - stage: test
+      - <<: *_test
         name: 20
-        before_install:
-          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
-          - sudo chmod +x /usr/local/bin/docker-compose
-        install:
-          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
-        script:
-          - ls -al $TRAVIS_HOME/cache/
-          - size=$TRAVIS_JOB_NAME docker-compose up -d
-          - sleep 5
-          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
-          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
-      - stage: test
+      - <<: *_test
         name: 30
-        before_install:
-          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
-          - sudo chmod +x /usr/local/bin/docker-compose
-        install:
-          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
-        script:
-          - ls -al $TRAVIS_HOME/cache/
-          - size=$TRAVIS_JOB_NAME docker-compose up -d
-          - sleep 5
-          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
-          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
-      - stage: test
+      - <<: *_test
         name: 40
-        before_install:
-          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
-          - sudo chmod +x /usr/local/bin/docker-compose
-        install:
-          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
-        script:
-          - ls -al $TRAVIS_HOME/cache/
-          - size=$TRAVIS_JOB_NAME docker-compose up -d
-          - sleep 5
-          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
-          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
-      - stage: test
+      - <<: *_test
         name: 50
-        before_install:
-          - sudo cp $TRAVIS_HOME/cache/docker-compose /usr/local/bin
-          - sudo chmod +x /usr/local/bin/docker-compose
-        install:
-          - docker load -i $TRAVIS_HOME/cache/$TRAVIS_JOB_NAME.tar.gz
-        script:
-          - ls -al $TRAVIS_HOME/cache/
-          - size=$TRAVIS_JOB_NAME docker-compose up -d
-          - sleep 5
-          - wget -O $TRAVIS_JOB_NAME.bin "http://localhost:8080/${TRAVIS_JOB_NAME}.bin"
-          - test $(stat --printf="%s" "${TRAVIS_JOB_NAME}.bin") -ge $(($TRAVIS_JOB_NAME * 1024 * 1024))
