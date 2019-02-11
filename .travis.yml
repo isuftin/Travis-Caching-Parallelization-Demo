@@ -49,6 +49,8 @@
               docker save myapache:$n -o $TRAVIS_HOME/cache/$n.tar.gz;
             done
       - <<: *_test
+        name: 5
+      - <<: *_test
         name: 10
       - <<: *_test
         name: 20
