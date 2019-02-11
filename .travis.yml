@@ -1,0 +1,30 @@
+---
+  sudo: required
+
+  language: bash
+
+  services: docker
+
+  env:
+    matrix:
+      - size=10
+      - size=20
+      - size=30
+      - size=40
+      - size=50
+
+  before_install:
+    - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+    - mkdir -p $TRAVIS_HOME/cache
+    - dd if=/dev/urandom of=$TRAVIS_HOME/cache/$size.bin bs=1M count=$size
+  install:
+    - cp $TRAVIS_HOME/cache/$size.bin .
+    - docker-compose build
+  script:
+    - docker-compose up -d
+    - sleep 5
+    - wget -O $size.bin "http://localhost:8080/$size.bin"
+    - test $(stat --printf="%s" "$size.bin") -ge $(($size * 1024 * 1024))
+    - docker-compose down
