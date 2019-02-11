@@ -22,8 +22,12 @@
           - chmod +x docker-compose
           - sudo mv docker-compose /usr/local/bin
           - mkdir -p $TRAVIS_HOME/cache
-          - for n in 10 20 30 40 50; do dd if=/dev/urandom of=$TRAVIS_HOME/cache/$n.bin bs=1M count=$n;done
+          - for n in 10 20 30 40 50; do dd if=/dev/zero of=$TRAVIS_HOME/cache/$n.bin bs=1M count=$n;done
       - stage: test
+        before_install:
+          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - chmod +x docker-compose
+          - sudo mv docker-compose /usr/local/bin
         install:
           - cp $TRAVIS_HOME/cache/10.bin .
           - size=10 docker-compose build
@@ -35,6 +39,10 @@
           - test $(stat --printf="%s" "10.bin") -ge $((10 * 1024 * 1024))
           - docker-compose down
       - stage: test
+        before_install:
+          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - chmod +x docker-compose
+          - sudo mv docker-compose /usr/local/bin
         install:
           - cp $TRAVIS_HOME/cache/20.bin .
           - size=20 docker-compose build
@@ -46,6 +54,10 @@
           - test $(stat --printf="%s" "20.bin") -ge $((20 * 1024 * 1024))
           - docker-compose down
       - stage: test
+        before_install:
+          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - chmod +x docker-compose
+          - sudo mv docker-compose /usr/local/bin
         install:
           - cp $TRAVIS_HOME/cache/30.bin .
           - size=30 docker-compose build
@@ -57,6 +69,10 @@
           - test $(stat --printf="%s" "30.bin") -ge $((30 * 1024 * 1024))
           - docker-compose down
       - stage: test
+        before_install:
+          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - chmod +x docker-compose
+          - sudo mv docker-compose /usr/local/bin
         install:
           - cp $TRAVIS_HOME/cache/40.bin .
           - size=40 docker-compose build
@@ -68,6 +84,10 @@
           - test $(stat --printf="%s" "40.bin") -ge $((40 * 1024 * 1024))
           - docker-compose down
       - stage: test
+        before_install:
+          - curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+          - chmod +x docker-compose
+          - sudo mv docker-compose /usr/local/bin
         install:
           - cp $TRAVIS_HOME/cache/50.bin .
           - size=50 docker-compose build
